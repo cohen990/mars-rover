@@ -21,7 +21,7 @@ export function commandRover(instructions: string): string {
       }
     }
     
-    results.push(posX + ' ' + posY + ' ' + DIRECTIONS[dirIndex]);
+    results.push(`${posX} ${posY} ${DIRECTIONS[dirIndex]}`);
   }
   
   return results.join("\n");
