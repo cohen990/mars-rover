@@ -1,32 +1,25 @@
-type Rover = { heading: string; x: number; y: number };
+const D = ['N', 'E', 'S', 'W'];
+const M = [[0, 1], [1, 0], [0, -1], [-1, 0]];
 
-// Optimized lookup tables
-const DIRS = ['N', 'E', 'S', 'W'];
-const MOVES = { N: [0, 1], E: [1, 0], S: [0, -1], W: [-1, 0] };
-const TURNS = { L: -1, R: 1 };
-
-export function commandRover(instructions: string): string {
-  const lines = instructions.split("\n");
-  const results = [];
+export function commandRover(s: string): string {
+  const l = s.split("\n");
+  let r = [];
   
-  for (let i = 1; i < lines.length; i += 2) {
-    const [x, y, h] = lines[i].split(" ");
-    let rover = { x: +x, y: +y, heading: h };
-    let dirIndex = DIRS.indexOf(h);
+  for (let i = 1; i < l.length; i += 2) {
+    let [x, y, d] = l[i].split(" ");
+    let [px, py, di] = [+x, +y, D.indexOf(d)];
     
-    for (const cmd of lines[i + 1]) {
-      if (cmd === 'M') {
-        const [dx, dy] = MOVES[rover.heading];
-        rover.x += dx;
-        rover.y += dy;
+    for (let c of l[i + 1]) {
+      if (c === 'M') {
+        px += M[di][0];
+        py += M[di][1];
       } else {
-        dirIndex = (dirIndex + TURNS[cmd] + 4) % 4;
-        rover.heading = DIRS[dirIndex];
+        di = (di + (c === 'L' ? 3 : 1)) % 4;
       }
     }
     
-    results.push(`${rover.x} ${rover.y} ${rover.heading}`);
+    r.push(`${px} ${py} ${D[di]}`);
   }
   
-  return results.join("\n");
+  return r.join("\n");
 }
