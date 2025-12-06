@@ -1,25 +1,25 @@
-const D = ['N', 'E', 'S', 'W'];
-const M = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+const DIRECTIONS = ['N', 'E', 'S', 'W'];
+const MOVES = [[0, 1], [1, 0], [0, -1], [-1, 0]];
 
-export function commandRover(s: string): string {
-  const l = s.split("\n");
-  let r = [];
+export function commandRover(instructions: string): string {
+  const lines = instructions.split("\n");
+  const results = [];
   
-  for (let i = 1; i < l.length; i += 2) {
-    let [x, y, d] = l[i].split(" ");
-    let [px, py, di] = [+x, +y, D.indexOf(d)];
+  for (let i = 1; i < lines.length; i += 2) {
+    const [x, y, heading] = lines[i].split(" ");
+    let [posX, posY, dirIndex] = [+x, +y, DIRECTIONS.indexOf(heading)];
     
-    for (let c of l[i + 1]) {
-      if (c === 'M') {
-        px += M[di][0];
-        py += M[di][1];
+    for (const command of lines[i + 1]) {
+      if (command === 'M') {
+        posX += MOVES[dirIndex][0];
+        posY += MOVES[dirIndex][1];
       } else {
-        di = (di + (c === 'L' ? 3 : 1)) % 4;
+        dirIndex = (dirIndex + (command === 'L' ? 3 : 1)) % 4;
       }
     }
     
-    r.push(`${px} ${py} ${D[di]}`);
+    results.push(`${posX} ${posY} ${DIRECTIONS[dirIndex]}`);
   }
   
-  return r.join("\n");
+  return results.join("\n");
 }
