@@ -17,15 +17,11 @@ export function commandRover(instructions: string): string {
         posX += DELTA_X[dirIndex];
         posY += DELTA_Y[dirIndex];
       } else {
-        if (command === 'L') {
-          dirIndex = (dirIndex + 3) & 3;
-        } else {
-          dirIndex = (dirIndex + 1) & 3;
-        }
+        dirIndex = (dirIndex + (command === 'L' ? 3 : 1)) & 3;
       }
     }
     
-    results.push(`${posX} ${posY} ${DIRECTIONS[dirIndex]}`);
+    results.push(posX + ' ' + posY + ' ' + DIRECTIONS[dirIndex]);
   }
   
   return results.join("\n");
