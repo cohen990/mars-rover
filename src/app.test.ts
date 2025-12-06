@@ -4,104 +4,43 @@ type Rover = {
   y: number;
 };
 
-const moves = {
-  M: forwards,
-  L: turnLeft,
-  R: turnRight,
-};
+// Consolidated direction mappings
+const DIRECTIONS = ['N', 'E', 'S', 'W'] as const;
+const DIRECTION_DELTAS = { N: [0, 1], E: [1, 0], S: [0, -1], W: [-1, 0] } as const;
 
-const cardinalMoves = {
-  E: moveEast,
-  W: moveWest,
-  N: moveNorth,
-  S: moveSouth,
-};
-
-const rightTurns = {
-  N: "E",
-  W: "N",
-  S: "W",
-  E: "S",
-};
-
-const leftTurns = {
-  N: "W",
-  W: "S",
-  S: "E",
-  E: "N",
-};
-
-function makeRover(heading: string, xRaw: string, yRaw: string): Rover {
-  return {
-    heading,
-    x: Number.parseInt(xRaw),
-    y: Number.parseInt(yRaw),
-  };
-}
-
-function moveEast(rover: Rover) {
-  rover.x++;
-}
-
-function moveNorth(rover: Rover) {
-  rover.y++;
-}
-
-function moveWest(rover: Rover) {
-  rover.x--;
-}
-
-function moveSouth(rover: Rover) {
-  rover.y--;
-}
-
-function forwards(rover: Rover) {
-  cardinalMoves[rover.heading](rover);
-}
-
-function turnRight(rover: Rover) {
-  rover.heading = rightTurns[rover.heading];
-}
-
-function turnLeft(rover: Rover) {
-  rover.heading = leftTurns[rover.heading];
-}
-
-type RoverCommand = {
-  position: string;
-  commands: string;
-};
-
-type Instructions = {
-  grid: string;
-  roverCommands: RoverCommand[];
-};
-
-function parseInstructions(instructions: string): Instructions {
-  const split = instructions.split("\n");
-  const roverCommands = [];
-  for (let i = 1; i < split.length; i += 2) {
-    roverCommands.push({ position: split[i], commands: split[i + 1] });
+function executeCommand(rover: Rover, command: string): void {
+  switch (command) {
+    case 'M':
+      const [dx, dy] = DIRECTION_DELTAS[rover.heading];
+      rover.x += dx;
+      rover.y += dy;
+      break;
+    case 'L':
+      const leftIndex = (DIRECTIONS.indexOf(rover.heading as any) + 3) % 4;
+      rover.heading = DIRECTIONS[leftIndex];
+      break;
+    case 'R':
+      const rightIndex = (DIRECTIONS.indexOf(rover.heading as any) + 1) % 4;
+      rover.heading = DIRECTIONS[rightIndex];
+      break;
   }
-
-  return { grid: split[0], roverCommands };
 }
 
 function commandRover(rawInstructions: string): string {
-  const instructions = parseInstructions(rawInstructions);
-  const results = [];
-  for (let i = 0; i < instructions.roverCommands.length; i++) {
-    const roverCommands = instructions.roverCommands[i];
-    const [xRaw, yRaw, heading] = roverCommands.position.split(" ");
-    const rover = makeRover(heading, xRaw, yRaw);
-
-    for (let j = 0; j < roverCommands.commands.length; j++) {
-      moves[roverCommands.commands[j]](rover);
+  const lines = rawInstructions.split("\n");
+  const results: string[] = [];
+  
+  for (let i = 1; i < lines.length; i += 2) {
+    const [x, y, heading] = lines[i].split(" ");
+    const rover: Rover = { x: parseInt(x), y: parseInt(y), heading };
+    
+    for (const command of lines[i + 1]) {
+      executeCommand(rover, command);
     }
-
+    
     results.push(`${rover.x} ${rover.y} ${rover.heading}`);
   }
-
+  
   return results.join("\n");
 }
 
