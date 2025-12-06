@@ -12,14 +12,14 @@ export function commandRover(instructions: string): string {
     let posY = +parts[1];
     let dirIndex = DIRECTIONS.indexOf(parts[2]);
     
-    [...lines[i + 1]].forEach(command => {
+    for (const command of lines[i + 1]) {
       if (command === 'M') {
         posX += DELTA_X[dirIndex];
         posY += DELTA_Y[dirIndex];
       } else {
         dirIndex = (dirIndex + (command === 'L' ? 3 : 1)) & 3;
       }
-    });
+    }
     
     results.push(`${posX} ${posY} ${DIRECTIONS[dirIndex]}`);
   }
