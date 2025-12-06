@@ -17,7 +17,8 @@ export function commandRover(instructions: string): string {
         posX += DELTA_X[dirIndex];
         posY += DELTA_Y[dirIndex];
       } else {
-        dirIndex = (dirIndex + (command === 'L' ? 3 : 1)) & 3;
+          var thing = command === 'L' ? 3 : 1;
+        dirIndex = (dirIndex + thing) & 3;
       }
     }
     
