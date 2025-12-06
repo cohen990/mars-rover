@@ -1,7 +1,3 @@
-const DIRECTIONS = 'NESW';
-const DELTA_X = [0, 1, 0, -1];
-const DELTA_Y = [1, 0, -1, 0];
-
 export function commandRover(instructions: string): string {
   const lines = instructions.split("\n");
   const results = [];
@@ -10,18 +6,18 @@ export function commandRover(instructions: string): string {
     const parts = lines[i].split(" ");
     let posX = +parts[0];
     let posY = +parts[1];
-    let dirIndex = DIRECTIONS.indexOf(parts[2]);
+    let dir = parts[2].charCodeAt(0) === 78 ? 0 : parts[2].charCodeAt(0) === 69 ? 1 : parts[2].charCodeAt(0) === 83 ? 2 : 3;
     
     for (const command of lines[i + 1]) {
       if (command === 'M') {
-        posX += DELTA_X[dirIndex];
-        posY += DELTA_Y[dirIndex];
+        posX += dir & 1 ? (dir & 2 ? -1 : 1) : 0;
+        posY += dir & 1 ? 0 : (dir & 2 ? -1 : 1);
       } else {
-        dirIndex = (dirIndex + (command === 'L' ? 3 : 1)) & 3;
+        dir = (dir + (command === 'L' ? 3 : 1)) & 3;
       }
     }
     
-    results.push(`${posX} ${posY} ${DIRECTIONS[dirIndex]}`);
+    results.push(`${posX} ${posY} ${'NESW'[dir]}`);
   }
   
   return results.join("\n");
